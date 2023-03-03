@@ -9,17 +9,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
-public class UpdateBrandRequest {
-	@NotNull
-	private int id;
+@NoArgsConstructor
+public class CreateModelRequest {
 	
 	@NotNull
 	@NotBlank
 	@Size(min = 3,max = 20)
 	private String name;
+	
+	@NotNull
+	private int brandId;
 
 }

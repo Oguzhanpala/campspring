@@ -3,129 +3,81 @@ package kodlama.io.rentACar.business.concretes;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kodlama.io.rentACar.business.abstracts.BrandService;
 import kodlama.io.rentACar.business.dtos.requests.CreateBrandRequest;
 import kodlama.io.rentACar.business.dtos.requests.UpdateBrandRequest;
-import kodlama.io.rentACar.business.dtos.responses.GetAllBrandResponse;
-import kodlama.io.rentACar.business.dtos.responses.GetByIdBrandResponse;
+import kodlama.io.rentACar.business.dtos.responses.GetAllBrandsResponse;
+import kodlama.io.rentACar.business.dtos.responses.GetByIdBrandsResponse;
+import kodlama.io.rentACar.business.rules.BrandBusinessRules;
 import kodlama.io.rentACar.core.utilities.mappers.ModelMapperService;
 import kodlama.io.rentACar.dataAccess.abstracts.BrandRepository;
 import kodlama.io.rentACar.entities.concretes.Brand;
+import lombok.AllArgsConstructor;
 
 @Service // Bu sınıf bir business nesnesidir..
+@AllArgsConstructor
 public class BrandManager implements BrandService {
-	
+
 	private BrandRepository brandRepository;
 	private ModelMapperService modelMapperService;
-
-	
-	@Autowired
-	public BrandManager(BrandRepository brandRepository, ModelMapperService modelMapperService) {
-		this.brandRepository = brandRepository;
-		this.modelMapperService = modelMapperService;
-	}
+	private BrandBusinessRules brandBusinessRules;
 
 	@Override
-	public List<GetAllBrandResponse> getAll() {
-		
+	public List<GetAllBrandsResponse> getAll() {
+
 		List<Brand> brands = brandRepository.findAll();
 
-		List<GetAllBrandResponse> brandResponses = brands.stream().map(brand->this.modelMapperService.forResponse()
-				.map(brand,GetAllBrandResponse.class))
+		List<GetAllBrandsResponse> brandResponses = brands.stream()
+				.map(brand -> this.modelMapperService.forResponse().map(brand, GetAllBrandsResponse.class))
 				.collect(Collectors.toList());
-		
+
 		return brandResponses;
 	}
 
 	@Override
-	public GetByIdBrandResponse getById(int id) throws Exception {
+	public GetByIdBrandsResponse getById(int id) {
 
-		if (!isIdExist(id)) {
-			throw new Exception("Geçersiz id");
-		}
+		brandBusinessRules.checkIfIdExists(id);
 
 		Brand brand = brandRepository.findById(id).orElseThrow();
-		
-		GetByIdBrandResponse getByIdBrandResponse = this.modelMapperService.forResponse().map(brand, GetByIdBrandResponse.class);
+
+		GetByIdBrandsResponse getByIdBrandResponse = this.modelMapperService.forResponse().map(brand,GetByIdBrandsResponse.class);
 		return getByIdBrandResponse;
 	}
 
 	@Override
-	public void add(CreateBrandRequest createBrandRequest) throws Exception {
+	public void add(CreateBrandRequest createBrandRequest){
+
 		
-		if (isNameEmpty(createBrandRequest.getName())) {
-			throw new Exception("Girilen isim boş olamaz tekrar deneyiniz!!");
-		}
-		if (isNameExist(createBrandRequest.getName())) {
-			throw new Exception("Girilen isim zaten kayıtlıdır.");
-		}
-		
-		//model mapper yöntemi ile mapleme işlemi yapıldı.
-		Brand brand =this.modelMapperService.forRequest().map(createBrandRequest, Brand.class);
+		brandBusinessRules.checkIfBrandNameExists(createBrandRequest.getName()); //yeni kullanılan iş kuralı
+
+		// model mapper yöntemi ile mapleme işlemi yapıldı.
+		Brand brand = this.modelMapperService.forRequest().map(createBrandRequest, Brand.class);
 		brandRepository.save(brand);
 
 	}
 
 	@Override
-	public void delete(int id) throws Exception {
+	public void delete(int id) {
 
-		if (!isIdExist(id)) {
-			throw new Exception("Geçersiz id");
-		}
+		brandBusinessRules.checkIfIdExists(id);
 
 		brandRepository.deleteById(id);
 
 	}
 
 	@Override
-	public void update(UpdateBrandRequest updateBrandRequest) throws Exception {
+	public void update(UpdateBrandRequest updateBrandRequest){
 
-		if (!isIdExist(updateBrandRequest.getId())) {
-			throw new Exception("Geçersiz id");
-		}
-		if (isNameEmpty(updateBrandRequest.getName())) {
-			throw new Exception("Girilen isim boş olamaz tekrar deneyin!!!");
-		}
-		if (isNameExist(updateBrandRequest.getName())) {
-			throw new Exception("Girilen isim zaten kayıtlıdır.");
-		}
+		brandBusinessRules.checkIfIdExists(updateBrandRequest.getId());
 		
-		Brand brand =this.modelMapperService.forRequest().map(updateBrandRequest, Brand.class);
+		brandBusinessRules.checkIfBrandNameExists(updateBrandRequest.getName());
+		
+		Brand brand = this.modelMapperService.forRequest().map(updateBrandRequest, Brand.class);
 		brandRepository.save(brand);
 	}
 
-	
-	
-	
-	private boolean isNameExist(String name) {
-		for (Brand brand : brandRepository.findAll()) {
-			if (brand.getName().equals(name)) {
-				return true;
-			}
-
-		}
-		return false;
-	}
-
-	private boolean isNameEmpty(String name) {
-		if (name.isBlank()) {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isIdExist(int id) {
-		for (Brand brand : brandRepository.findAll()) {
-			if (brand.getId() == id) {
-				return true;
-
-			}
-
-		}
-		return false;
-	}
 
 }

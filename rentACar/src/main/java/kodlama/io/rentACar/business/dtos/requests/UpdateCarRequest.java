@@ -2,24 +2,38 @@ package kodlama.io.rentACar.business.dtos.requests;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
-public class UpdateBrandRequest {
+@NoArgsConstructor
+public class UpdateCarRequest {
+
 	@NotNull
 	private int id;
 	
 	@NotNull
 	@NotBlank
-	@Size(min = 3,max = 20)
-	private String name;
+	private String plate;
+
+	@NotNull
+	@NotBlank
+	private double dailyPrice;
+
+	@NotNull
+	@NotBlank
+	private int modelYear;
+
+	@NotNull
+	@NotBlank
+	private int state; // 1-Available 2-Rented 3-Maintenance
+
+	@NotNull
+	private int modelId;
 
 }

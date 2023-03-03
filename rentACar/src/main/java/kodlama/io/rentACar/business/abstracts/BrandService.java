@@ -4,17 +4,17 @@ import java.util.List;
 
 import kodlama.io.rentACar.business.dtos.requests.CreateBrandRequest;
 import kodlama.io.rentACar.business.dtos.requests.UpdateBrandRequest;
-import kodlama.io.rentACar.business.dtos.responses.GetAllBrandResponse;
-import kodlama.io.rentACar.business.dtos.responses.GetByIdBrandResponse;
+import kodlama.io.rentACar.business.dtos.responses.GetAllBrandsResponse;
+import kodlama.io.rentACar.business.dtos.responses.GetByIdBrandsResponse;
 
 public interface BrandService {
 	
-	List<GetAllBrandResponse> getAll();
-	GetByIdBrandResponse getById(int id) throws Exception;
+	List<GetAllBrandsResponse> getAll();
+	GetByIdBrandsResponse getById(int id);
 
 	
-	void add(CreateBrandRequest createBrandRequest) throws Exception;
-	void delete(int id) throws Exception;
-	void update(UpdateBrandRequest updateBrandRequest) throws Exception;
+	void add(CreateBrandRequest createBrandRequest);
+	void delete(int id);
+	void update(UpdateBrandRequest updateBrandRequest);
 
 }

@@ -2,9 +2,10 @@ package kodlama.io.rentACar.dataAccess.abstracts;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import kodlama.io.rentACar.entities.concretes.Brand;
+import kodlama.io.rentACar.entities.concretes.Model;
 
-public interface BrandRepository extends JpaRepository<Brand, Integer> {
+public interface ModelRepository extends JpaRepository<Model, Integer> {
 
 	boolean existsByname(String name);
+
 }
